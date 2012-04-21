@@ -89,13 +89,38 @@ class DocumentIndex(object):
 
         return results
 
+def clean(text):
+    return (
+        text
+        .lower()
+        .replace('/', '')
+        .replace('(', '')
+        .replace(')', '')
+        .replace(')', '')
+        .replace(':', '')
+        .replace('.', '')
+        .replace(',', '')
+        .replace(';', '')
+        .replace(';', '')
+        .replace('?', ' ?')
+        .replace('!', ' !')
+        .replace('-', ' - '))
+
 if __name__ == "__main__":
     filename = sys.argv[1]
     f = open(filename, "r")
     di = DocumentIndex(f)
 
     while True:
-        inp = raw_input("> ")
+        #inp = raw_input(">")
+        sys.stdout.write('> ')
+        sys.stdout.flush()
+        try: inp = sys.stdin.readline()
+        except: break
+        inp = inp.strip()
+        #inp = clean(inp)
+        if not inp: continue
         results = di.query(inp)
         print json.dumps(results)
+    sys.stdout.flush()
 
