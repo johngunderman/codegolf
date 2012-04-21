@@ -1,4 +1,4 @@
-import sys
+import sys, json
 
 class DocumentIndex(object):
 
@@ -97,5 +97,5 @@ if __name__ == "__main__":
     while True:
         inp = raw_input("> ")
         results = di.query(inp)
-        print results
+        print json.dumps(results)
 
