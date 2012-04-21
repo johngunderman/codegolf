@@ -1,4 +1,4 @@
-import sys, math
+import sys
 
 class DocumentIndex(object):
 
@@ -29,48 +29,61 @@ class DocumentIndex(object):
 
         self._keys = self._dict.keys()
         self._keys.sort()
-        print self._keys
 
     def query(self, query_str):
-        hi = len(self._keys)
+        hi = len(self._keys) - 1
         lo = 0
 
-        while (lo <= hi):
-            mid = math.floor((lo + hi) / 2)
-            res = self.cmp_str(self._keys[mid], query_str)
+        qs = query_str.split(' ')
+        results = list()
 
-            if (res < 0):
-                lo = mid + 1
-            elif (res > 0):
-                hi = mid - 1
-            else:
-                return self.matching(mid, query_str)
+        for q in qs:
+            while (lo <= hi):
+                mid = int((lo + hi) / 2)
+                res = self.cmp_str(self._keys[mid], q)
+
+                if (res < 0):
+                    lo = mid + 1
+                elif (res > 0):
+                    hi = mid - 1
+                else:
+                    results.append(self.matching(mid, q))
+                    break
+
+        if len(results) > 0:
+            res = results[0]
+            for r in results:
+                res = set(res) & set(r)
+            return list(res)
+        else:
+            return []
+
 
     def cmp_str(self, key, query_str):
-        for x in range(0, len(query_str)):
-            if len(key) > x:
-                return 1
-            if key[x] > query_str[x]:
-                return 1
-            if key[x] < query_str[x]:
-                return -1
-        return 0
+        try:
+            for x in range(0, len(query_str)):
+                if key[x] > query_str[x]:
+                    return 1
+                if key[x] < query_str[x]:
+                    return -1
+            return 0
+        except IndexError:
+            return 1
 
 
     def matching(self, mid, query_str):
         results = []
-        # search lower
         key = self._keys[mid]
         m = mid
 
         while (self.cmp_str(key, query_str) == 0):
-            results.append(self._dict[key])
+            results.extend(self._dict[key])
             m -= 1
             key = self._keys[m]
 
         m = mid + 1
         while(self.cmp_str(key, query_str) == 0):
-            results.append(self._dict[key])
+            results.extend(self._dict[key])
             m += 1
             key = self._keys[m]
 
@@ -82,9 +95,7 @@ if __name__ == "__main__":
     di = DocumentIndex(f)
 
     while True:
-        try:
-            inp = raw_input(">")
-            results = di.query(query_str)
-            print results
-        except:
-            break
+        inp = raw_input("> ")
+        results = di.query(inp)
+        print results
+
