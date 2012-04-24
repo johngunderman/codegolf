@@ -54,6 +54,7 @@ class DocumentIndex(object):
             res = results[0]
             for r in results:
                 res = set(res) & set(r)
+                res = set(res)
             return list(res)
         else:
             return []
@@ -87,6 +88,7 @@ class DocumentIndex(object):
             m += 1
             key = self._keys[m]
 
+        #print "results: ", results
         return results
 
 def clean(text):
@@ -112,15 +114,14 @@ if __name__ == "__main__":
     di = DocumentIndex(f)
 
     while True:
-        #inp = raw_input(">")
         sys.stdout.write('> ')
         sys.stdout.flush()
         try: inp = sys.stdin.readline()
         except: break
         inp = inp.strip()
-        #inp = clean(inp)
+        inp = clean(inp)
         if not inp: continue
         results = di.query(inp)
-        print json.dumps(results)
+        sys.stdout.write(json.dumps(results))
     sys.stdout.flush()
 
